@@ -218,11 +218,17 @@
           `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
              <span aria-hidden="true">←</span> Hub
            </button>
-           <div class="brains-game-main">
-             <h2 style="color:var(--accent);">Reaction Time Tracker</h2>
-             <p>This is a placeholder for the Reaction Time minigame.<br>
-             Fast reflex test UI will appear here.</p>
-             <div style="font-size:2.1em;margin-top:22px;" aria-hidden="true">⚡⏱️☄️</div>
+           <div class="brains-game-main" id="reaction-time-root">
+             <h2 style="color:var(--accent);">Reaction Time Tester</h2>
+             <p id="reaction-desc">When you click <b>Start</b>, wait for the screen to turn <span style="color:var(--accent);font-weight:600;">green</span>.<br>
+               <span style="color:var(--text-secondary);">Tap/click as fast as you can when ready!<br>
+               If you click too soon, you'll have to retry.</span>
+             </p>
+             <div id="reaction-box" style="width:198px;height:85px;display:flex;justify-content:center;align-items:center;background:#ddd; border-radius:13px;cursor:pointer;transition:background 0.12s;font-size:1.1em;font-weight:600;color:var(--text); margin:14px 0 10px 0;border:2.2px solid var(--border);">
+               <button id="start-reaction-btn" class="btn" style="font-size:1.06em;">Start</button>
+             </div>
+             <div id="reaction-feedback" style="min-height:32px;margin-top:0.7em;font-size:1.06em;font-weight:500;color:var(--accent);"></div>
+             <div id="reaction-last" style="margin-top:0.1em;color:var(--text-secondary);font-size:0.97em;">Best: -- ms</div>
            </div>`,
         'memory-match':
           `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
@@ -286,13 +292,13 @@
     // Pattern Recognition Game JS (minimal logic for prototype)
     (function() {
       const area = document.getElementById('brains-game-area');
+      // ---- Pattern Recognition game logic (as before) ----
       let sequence = [];
       let userInput = [];
       let acceptingInput = false;
       let round = 0;
       let score = 0;
       let gridBtns = [];
-      // If not pattern-recognition, do nothing
       function patternGameMount() {
         const root = area.querySelector('#pattern-recognition-root');
         if (!root) return;
@@ -322,24 +328,18 @@
           tile.style.cursor = 'pointer';
           tile.dataset.idx = i;
           tile.tabIndex = 0;
-          tile.innerHTML = ''; // Could show a dot on highlight
+          tile.innerHTML = '';
           tile.addEventListener('click', onGridClick);
           grid.appendChild(tile);
           gridBtns.push(tile);
         }
         feedback.textContent = 'Press Start to Play!';
         scoreBlock.textContent = 'Score: 0';
-        // Reset button text
         btn.textContent = 'Start';
         btn.disabled = false;
         btn.onclick = startGame;
       }
-      function startGame() {
-        score = 0;
-        round = 0;
-        showScore();
-        nextRound();
-      }
+      function startGame() { score = 0; round = 0; showScore(); nextRound(); }
       function showScore() {
         const root = area.querySelector('#pattern-recognition-root');
         if (!root) return;
@@ -374,7 +374,6 @@
         showFeedback('Your turn: Repeat the pattern!','var(--text-secondary)');
       }
       function nextRound() {
-        // Add new random tile (0-8) to sequence and display
         round++;
         showFeedback(`Round ${round}: Watch and repeat.`,'var(--accent)');
         sequence.push(Math.floor(Math.random()*9));
@@ -385,14 +384,12 @@
         const idx = Number(ev.currentTarget.dataset.idx);
         highlight(idx);
         userInput.push(idx);
-        // Check so far
         const curr = userInput.length-1;
         if (userInput[curr] !== sequence[curr]) {
           gameOver();
           return;
         }
         if (userInput.length === sequence.length) {
-          // Success!
           score+= 1;
           showScore();
           showFeedback('Correct! Next round...','#11e497');
@@ -411,12 +408,98 @@
       }
       // Attach to page updates: when pattern-recognition div appears, run mount
       const observer = new MutationObserver(() => {
-        // Called whenever gameArea is updated (i.e., user enters Pattern Recognition)
         patternGameMount();
+        reactionGameMount();
       });
       observer.observe(area, {childList:true, subtree:true});
       // Initial attach if already present:
       patternGameMount();
+
+      // ---- Reaction Time Tester (core logic) ----
+      function reactionGameMount() {
+        const rroot = area.querySelector('#reaction-time-root');
+        if (!rroot) return;
+        let state = 'init'; // states: init, waiting, ready, clicked, tooSoon
+        let timer = null;
+        let startTime = null;
+        let bestScore = null;
+        let lastTime = null;
+
+        const box = rroot.querySelector('#reaction-box');
+        const feedback = rroot.querySelector('#reaction-feedback');
+        const lastBlock = rroot.querySelector('#reaction-last');
+        const startBtn = rroot.querySelector('#start-reaction-btn');
+
+        function resetBox() {
+          box.style.background = "#ddd";
+          box.style.border = "2.2px solid var(--border)";
+          box.textContent = "";
+          box.innerHTML = `<button id="start-reaction-btn" class="btn" style="font-size:1.06em;">Start</button>`;
+          feedback.textContent = '';
+          state = 'init';
+          if (lastBlock && lastTime !== null) {
+            lastBlock.textContent = `Best: ${bestScore !== null ? bestScore+' ms':'--'}${lastTime!==null ? ' | Last: '+lastTime+' ms' : ''}`;
+          }
+          // Set up event again
+          rroot.querySelector('#start-reaction-btn').onclick = startWaiting;
+        }
+
+        function startWaiting() {
+          state = 'waiting';
+          feedback.textContent = 'Wait for green...';
+          box.style.background = "#ffec82";
+          box.style.border = "2.4px solid #eec51a";
+          box.innerHTML = `<span>...</span>`;
+          // Clear handlers (prevent double start)
+          box.onclick = null;
+          // Random wait: 700ms - 1700ms
+          const wait = 700+Math.random()*1000;
+          timer = setTimeout(() => {
+            state = 'ready';
+            startTime = performance.now();
+            box.style.background = "#43e09f";
+            box.style.border = "2.4px solid #22b366";
+            box.innerHTML = `<span style="font-size:1.18em;">TAP!</span>`;
+            feedback.textContent = "Go!";
+            box.onclick = reactionClick;
+          }, wait);
+          // Detect false start:
+          box.onclick = earlyClick;
+        }
+
+        function earlyClick() {
+          if (state === 'waiting') {
+            state = 'tooSoon';
+            clearTimeout(timer);
+            box.style.background = "#ff416c";
+            box.style.border = "2.4px solid #c2184f";
+            box.innerHTML = `<span style="color:#fff;font-weight:600;">Too soon!</span>`;
+            feedback.textContent = "Oops, try again!";
+            setTimeout(resetBox, 900);
+          }
+        }
+
+        function reactionClick() {
+          if (state !== 'ready') return;
+          state = 'clicked';
+          const delta = Math.round(performance.now() - startTime);
+          feedback.textContent = `Your reaction: ${delta} ms`;
+          lastTime = delta;
+          if (bestScore === null || delta < bestScore) bestScore = delta;
+          box.style.background = "#aae9bf";
+          box.style.border = "2.5px solid #36ae77";
+          box.innerHTML = `<span style="font-size:1.15em;">${delta} ms</span>`;
+          if (lastBlock) lastBlock.textContent = `Best: ${bestScore} ms | Last: ${lastTime} ms`;
+          setTimeout(resetBox, 1100);
+        }
+
+        // Attach start event on mount
+        resetBox();
+      }
+
+      // Also mount on direct navigation
+      reactionGameMount();
+
     })();
   </script>
 </body>
