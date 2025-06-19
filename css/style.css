@@ -1,0 +1,253 @@
+:root {
+  --sidebar-width: 210px;
+  --sidebar-collapsed: 60px;
+  --primary-bg: #212733;
+  --secondary-bg: #30384d;
+  --accent: #11e497;
+  --tab-bg: #23283a;
+  --tab-active-bg: #323e5e;
+  --text: #f4f6fb;
+  --text-secondary: #a5adbe;
+  --border: #23283a;
+  --shadow: 0 2px 10px 0 rgba(26,32,44,0.12);
+  --radius: 16px;
+}
+
+body {
+  margin: 0;
+  background: var(--primary-bg);
+  color: var(--text);
+  font-family: 'Inter', Arial, sans-serif;
+  min-height: 100vh;
+}
+
+#mmos-app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.mmos-sidebar {
+  background: var(--secondary-bg);
+  color: var(--text);
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: width 0.2s cubic-bezier(.4,0,.2,1);
+  z-index: 10;
+}
+
+.mmos-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 28px 18px 20px 28px;
+  letter-spacing: 1px;
+  text-align: left;
+}
+
+.mmos-sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mmos-sidebar-nav li {
+  padding: 15px 34px;
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  transition: background 0.14s;
+  border-left: 3px solid transparent;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+}
+
+.mmos-sidebar-nav li.active,
+.mmos-sidebar-nav li:hover {
+  background: var(--tab-active-bg);
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
+}
+
+#sidebar-toggle {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tab-bg);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: background 0.2s;
+}
+
+#sidebar-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Collapsed sidebar */
+.mmos-sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+  min-width: var(--sidebar-collapsed);
+}
+.mmos-sidebar.collapsed .mmos-logo {
+  font-size: 1.3rem;
+  padding: 24px 0 8px 0;
+  text-align: center;
+}
+.mmos-sidebar.collapsed .mmos-sidebar-nav li span + span {
+  display: none;
+}
+.mmos-sidebar.collapsed .mmos-sidebar-nav li {
+  padding: 15px 0;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+.mmos-sidebar.collapsed #sidebar-toggle {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Main content and tabs */
+.mmos-main-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--primary-bg);
+}
+
+.mmos-tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  background: var(--tab-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 18px;
+  height: 48px;
+  align-items: center;
+}
+
+.mmos-tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  padding: 12px 22px 10px 12px;
+  margin-right: 6px;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.18s, background 0.2s;
+}
+.mmos-tab.active {
+  background: var(--secondary-bg);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 -2px 10px 0 rgba(26,32,44,0.05);
+}
+
+/* Tab close button */
+.mmos-tab .tab-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.mmos-tab .tab-close:hover {
+  color: #ff416c;
+}
+
+.mmos-tab-content {
+  flex: 1;
+  background: var(--tab-bg);
+  min-height: 300px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 34px 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* Welcome / Blank */
+.mmos-welcome {
+  text-align: center;
+  color: var(--accent);
+  opacity: 0.92;
+  margin-top: 80px;
+}
+.mmos-welcome h1 {
+  margin: 0 0 14px 0;
+  font-size: 2.3rem;
+  font-weight: 700;
+}
+.mmos-welcome p {
+  color: #bcefd7;
+  margin-bottom: 12px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  :root {
+    --sidebar-width: 60px;
+  }
+  .mmos-sidebar:not(.collapsed) {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+  }
+  .mmos-sidebar .mmos-logo,
+  .mmos-sidebar-nav li span + span {
+    display: none;
+  }
+  .mmos-sidebar-nav li {
+    padding: 14px 0;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+  #sidebar-toggle {
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  #mmos-app {
+    flex-direction: column;
+  }
+  .mmos-sidebar {
+    flex-direction: row;
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .mmos-sidebar-nav {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+  }
+  .mmos-sidebar-nav li {
+    padding: 0 10px;
+    font-size: 1.1rem;
+  }
+  .mmos-main-content {
+    padding-top: 0;
+  }
+  #sidebar-toggle {
+    display: none;
+  }
+}

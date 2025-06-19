@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindMeld OS</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="mmos-app">
+    <aside class="mmos-sidebar" id="sidebar">
+      <div class="mmos-logo">🧠 MindMeld OS</div>
+      <nav>
+        <ul class="mmos-sidebar-nav">
+          <li data-module="brain-games" class="active"><span>🧩</span> Brain Games</li>
+          <li data-module="illusions"><span>🎨</span> Optical Illusions</li>
+          <li data-module="memory-trainer"><span>🗃️</span> Memory Trainer</li>
+          <li data-module="mindful-breathing"><span>🌿</span> Mindful Breathing</li>
+          <li data-module="ai-chatbot"><span>🤖</span> AI Chatbot</li>
+          <li data-module="youtube-downloader"><span>⬇️</span> YouTube Downloader</li>
+          <li data-module="trivia-flashcards"><span>📚</span> Trivia Flashcards</li>
+        </ul>
+      </nav>
+      <button id="sidebar-toggle" aria-label="Toggle Sidebar">≡</button>
+    </aside>
+    <main class="mmos-main-content">
+      <div id="tab-bar" class="mmos-tabs">
+        <!-- Opened tabs will be inserted here dynamically -->
+      </div>
+      <section id="tab-content" class="mmos-tab-content">
+        <!-- Module content will be dynamically loaded here -->
+        <div class="mmos-welcome">
+          <h1>Welcome to MindMeld OS</h1>
+          <p>A modular browser-based OS for cognitive stimulation.</p>
+          <p>Select a feature from the sidebar to begin.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
