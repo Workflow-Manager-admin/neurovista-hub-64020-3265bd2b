@@ -1,1 +1,283 @@
-<!-- Brain Games module (empty stub) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain Games - MindMeld OS</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    /* Module-specific overrides for brain-games */
+    .brains-hub-container {
+      background: var(--tab-bg);
+      padding: 38px 18px 34px 18px;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 34px 0 rgba(30,230,190,0.034);
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      align-items: stretch;
+      justify-content: flex-start;
+      animation: fadeIn 0.3s linear;
+    }
+    .brains-hub-header {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      background: var(--secondary-bg);
+      border-radius: calc(var(--radius) * 0.65);
+      padding: 12px 17px 12px 12px;
+      box-shadow: 0 1px 7px 0 rgba(40, 230, 210, 0.10);
+      border-bottom: 2px solid var(--border);
+    }
+    .brains-hub-header-icon {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border-radius: 13px;
+      display: flex;align-items:center;justify-content:center;
+      box-shadow: 0 1px 4px 0 rgba(30,230,190,0.08);
+    }
+    .brains-hub-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin: 0; color: var(--accent);
+      transition: color var(--transition);
+    }
+    .brains-hub-tiles {
+      display: flex;
+      gap: 34px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 18px;
+      margin-bottom: 12px;
+    }
+    .brains-hub-tile {
+      background: var(--secondary-bg);
+      border: 2.5px solid var(--border);
+      border-radius: calc(var(--radius) * 0.73);
+      box-shadow: 0 2px 16px 0 rgba(44,218,180,0.11);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      width: 210px;
+      min-height: 175px;
+      padding: 28px 14px 18px 14px;
+      cursor: pointer;
+      transition: box-shadow 0.15s, border-color 0.16s, transform 0.16s;
+      outline: none;
+      position: relative;
+      font-size: 1.09rem;
+    }
+    .brains-hub-tile:focus-visible,
+    .brains-hub-tile:hover {
+      box-shadow: 0 4px 28px 0 rgba(44,218,180,0.17);
+      border-color: var(--accent);
+      transform: translateY(-5px) scale(1.03);
+      z-index: 3;
+    }
+    .brains-hub-tile-icon {
+      font-size: 2.0em;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--tab-bg);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+      box-shadow: 0 1.5px 7px 0 rgba(16,200,180,0.06);
+    }
+    .brains-hub-tile-title {
+      font-size: 1.13em;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--text);
+      letter-spacing: .02em;
+      text-align: center;
+    }
+    .brains-hub-tile-desc {
+      font-size: 0.97em;
+      color: var(--text-secondary);
+      text-align: center;
+      min-height: 2.3em;
+      opacity: 0.94;
+    }
+    @media (max-width: 960px) {
+      .brains-hub-tiles { flex-wrap: wrap; gap: 18px;}
+      .brains-hub-tile { width: 165px; min-height: 128px;}
+      .brains-hub-header-title { font-size: 1.1rem;}
+    }
+    @media (max-width: 600px) {
+      .brains-hub-container { padding: 13px 4.5vw; }
+      .brains-hub-tiles { gap: 11px; }
+      .brains-hub-tile { width: 98vw; max-width: 360px; min-height: 98px; padding: 18px 10px;}
+      .brains-hub-header { gap: 10px; padding: 9px 8px 8px 9px;}
+      .brains-hub-title { font-size: 1.06rem;}
+    }
+
+    /* Minimal in-module game view styling */
+    .brains-game-back {
+      display: inline-flex; align-items: center;
+      gap: 5px; margin-bottom: 18px; font-size: 0.98em;
+      color: var(--accent);
+      background: none; border: none; cursor: pointer;
+      padding: 3px 8px 3px 2px; border-radius: 6px;
+      transition: background 0.13s;
+    }
+    .brains-game-back:hover,
+    .brains-game-back:focus-visible {
+      background: var(--tab-bg);
+      color: var(--accent);
+      text-decoration: underline;
+    }
+    .brains-game-main {
+      background: var(--secondary-bg);
+      border-radius: calc(var(--radius) * 0.6);
+      padding: 22px 7vw 36px 7vw;
+      box-shadow: 0 2px 12px 0 rgba(40,240,210,0.09);
+      margin-top: 0;
+      color: var(--text);
+      min-height: 180px;
+      animation: fadeIn .22s linear;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .brains-game-main { padding: 14px 7px 24px 7px;}
+      .brains-game-back { font-size: 0.91em;}
+    }
+    @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+  </style>
+</head>
+<body>
+  <section class="brains-hub-container" id="brains-hub-container">
+    <header class="brains-hub-header">
+      <span class="brains-hub-header-icon">
+        <!-- Brain (emoji fallback) -->
+        <span style="font-size:2em;" aria-hidden="true">🧩</span>
+      </span>
+      <h1 class="brains-hub-title">Brain Games Hub</h1>
+    </header>
+    <div class="brains-hub-tiles" id="brains-hub-tiles">
+      <button class="brains-hub-tile" data-game="pattern-recognition" tabindex="0">
+        <span class="brains-hub-tile-icon" aria-hidden="true">🔳</span>
+        <span class="brains-hub-tile-title">Pattern Recognition</span>
+        <span class="brains-hub-tile-desc">Spot sequences and discover the logic in rapid puzzles.</span>
+      </button>
+      <button class="brains-hub-tile" data-game="reaction-time" tabindex="0">
+        <span class="brains-hub-tile-icon" aria-hidden="true">⚡</span>
+        <span class="brains-hub-tile-title">Reaction Time</span>
+        <span class="brains-hub-tile-desc">Test and train your reflexes. How quick is your mind?</span>
+      </button>
+      <button class="brains-hub-tile" data-game="memory-match" tabindex="0">
+        <span class="brains-hub-tile-icon" aria-hidden="true">🧠</span>
+        <span class="brains-hub-tile-title">Memory Match</span>
+        <span class="brains-hub-tile-desc">Flip tiles, match pairs, and build your working memory.</span>
+      </button>
+    </div>
+    <div id="brains-game-area"></div>
+  </section>
+  <script>
+    // Brain Games Hub - in-module navigation logic
+    (function() {
+      // Tiles (menu/card) logic
+      const tileButtons = Array.from(document.querySelectorAll('.brains-hub-tile'));
+      const hubTiles = document.getElementById('brains-hub-tiles');
+      const gameArea = document.getElementById('brains-game-area');
+      let inGame = false;
+      // Game name to display mapping
+      const GAME_NAMES = {
+        'pattern-recognition': 'Pattern Recognition',
+        'reaction-time': 'Reaction Time',
+        'memory-match': 'Memory Match'
+      };
+      // Placeholder template for each game UI
+      const GAME_PLACEHOLDERS = {
+        'pattern-recognition':
+          `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
+            <span aria-hidden="true">←</span> Hub
+          </button>
+          <div class="brains-game-main">
+            <h2 style="color:var(--accent);">Pattern Recognition</h2>
+            <p>This is a placeholder for the Pattern Recognition minigame.<br>
+            Interactive puzzle logic will appear here.</p>
+            <div style="font-size:2.2em;margin-top:23px;" aria-hidden="true">🔳🔲⬛</div>
+          </div>`,
+        'reaction-time':
+          `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
+             <span aria-hidden="true">←</span> Hub
+           </button>
+           <div class="brains-game-main">
+             <h2 style="color:var(--accent);">Reaction Time Tracker</h2>
+             <p>This is a placeholder for the Reaction Time minigame.<br>
+             Fast reflex test UI will appear here.</p>
+             <div style="font-size:2.1em;margin-top:22px;" aria-hidden="true">⚡⏱️☄️</div>
+           </div>`,
+        'memory-match':
+          `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
+             <span aria-hidden="true">←</span> Hub
+           </button>
+           <div class="brains-game-main">
+             <h2 style="color:var(--accent);">Memory Match</h2>
+             <p>This is a placeholder for the Memory Match minigame.<br>
+             Card-matching gameplay goes here.</p>
+             <div style="font-size:2.1em;margin-top:22px;" aria-hidden="true">🧠🃏🎴</div>
+           </div>`
+      };
+
+      // For accessibility: allow tab, space, and enter on cards
+      function onTileClickOrEnter(ev) {
+        if (ev.type === 'click' || ev.key === ' ' || ev.key === 'Enter') {
+          const game = ev.currentTarget.getAttribute('data-game');
+          showGame(game);
+        }
+      }
+      tileButtons.forEach(btn => {
+        btn.addEventListener('click', onTileClickOrEnter);
+        btn.addEventListener('keydown', function(ev) {
+          if (ev.key === ' ' || ev.key === 'Enter') {
+            onTileClickOrEnter(ev);
+          }
+        });
+      });
+
+      // PUBLIC_INTERFACE
+      function showGame(gameName) {
+        if (!GAME_PLACEHOLDERS[gameName]) return;
+        gameArea.innerHTML = GAME_PLACEHOLDERS[gameName];
+        hubTiles.style.display = 'none';
+        inGame = true;
+        // Setup "Back to hub" button inside gamemode UI
+        const backBtn = gameArea.querySelector('.brains-game-back');
+        if (backBtn) {
+          backBtn.addEventListener('click', backToHub);
+          backBtn.addEventListener('keydown', function(ev){
+            if (ev.key === " " || ev.key === "Enter") {
+              ev.preventDefault();
+              backToHub();
+            }
+          });
+        }
+      }
+      function backToHub() {
+        gameArea.innerHTML = '';
+        hubTiles.style.display = 'flex';
+        inGame = false;
+        // Return focus to first tile for accessibility
+        if (tileButtons[0]) tileButtons[0].focus();
+      }
+      // For browser navigation: support in-module "back" (optional)
+      window.addEventListener('popstate', () => {
+        if (inGame) { backToHub(); }
+      });
+    })();
+  </script>
+</body>
+</html>
