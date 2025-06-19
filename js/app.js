@@ -1,117 +1,197 @@
-// PUBLIC_INTERFACE
 /**
- * MindMeld OS: Tabbed Sidebar App Framework
- * Handles sidebar, tab opening/closing, and loads module HTML into tab content area.
+ * MindMeld OS: Sidebar, Tab, and Dynamic Module Loader
+ * Handles sidebar navigation, tab creation, dynamic loading of HTML modules, tab switching, and safe tab closing.
+ * Uses only markup hooks present in index.html.
  */
+// PUBLIC_INTERFACE
 document.addEventListener("DOMContentLoaded", () => {
+  // Key DOM hooks (must match index.html)
   const sidebar = document.getElementById("sidebar");
   const sidebarToggle = document.getElementById("sidebar-toggle");
-  const navItems = document.querySelectorAll(".mmos-sidebar-nav li");
+  const navItems = document.querySelectorAll("#sidebar-nav li");
   const tabBar = document.getElementById("tab-bar");
   const tabContent = document.getElementById("tab-content");
+  const welcomeBlock = document.getElementById("mmos-welcome");
 
-  // Map of opened { moduleName: {tabEl, contentEl, title, ...} }
+  // Track open tabs: { [module]: {tabEl, loadedHTML} }
   const openedTabs = {};
 
-  // Display name for modules
-  const moduleNames = {
+  // Map data-module attribute to user-facing name
+  const moduleDisplayNames = {
     "brain-games": "Brain Games",
     "illusions": "Optical Illusions",
+    "pattern-recognition": "Pattern Recognition",
     "memory-trainer": "Memory Trainer",
     "mindful-breathing": "Mindful Breathing",
     "ai-chatbot": "AI Chatbot",
     "youtube-downloader": "YouTube Downloader",
-    "trivia-flashcards": "Trivia Flashcards"
+    "trivia-flashcards": "Trivia Flashcards",
+    "rich-ui-ux": "Rich UI & UX"
   };
 
-  // Sidebar toggling
+  // Sidebar: handle collapsing
   sidebarToggle.addEventListener("click", () => {
     sidebar.classList.toggle("collapsed");
   });
 
-  // Sidebar nav open module as tab handler
+  // Sidebar: Handle clicks to open/activate modules as tabs
   navItems.forEach(item => {
     item.addEventListener("click", () => {
+      const module = item.getAttribute("data-module");
+      // Sidebar highlight (nav item active)
       navItems.forEach(nav => nav.classList.remove("active"));
       item.classList.add("active");
-      const module = item.getAttribute("data-module");
-      openTab(module);
+      // Open or focus tab for this module
+      openModuleTab(module);
     });
   });
 
-  function openTab(module) {
+  // Main function: open (or activate/focus) the module tab
+  // PUBLIC_INTERFACE
+  function openModuleTab(module) {
+    // Prevent duplicate tabs
     if (openedTabs[module]) {
-      // Already opened, just activate
       setActiveTab(module);
       return;
     }
-    // Create tab element
+    // Clear welcome block if first tab
+    if (isWelcomeDisplayed()) {
+      tabContent.innerHTML = '';
+    }
+
+    // Tab element creation
     const tabEl = document.createElement("button");
     tabEl.className = "mmos-tab active";
-    tabEl.textContent = moduleNames[module] || module;
-    // Tab close (except for default tab)
+    tabEl.type = "button";
+    tabEl.setAttribute("data-module", module);
+
+    const label = document.createElement("span");
+    label.textContent = moduleDisplayNames[module] || module;
+    tabEl.appendChild(label);
+
+    // Add close button unless it's a "single" tab (here, always allow close)
     const closeBtn = document.createElement("button");
     closeBtn.className = "tab-close";
+    closeBtn.type = "button";
     closeBtn.setAttribute("title", "Close tab");
     closeBtn.textContent = "×";
-    closeBtn.addEventListener("click", e => {
+    closeBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       closeTab(module);
     });
     tabEl.appendChild(closeBtn);
+
     tabEl.addEventListener("click", () => setActiveTab(module));
     tabBar.appendChild(tabEl);
 
-    openedTabs[module] = { tabEl };
+    // Add to openedTabs state
+    openedTabs[module] = {
+      tabEl,
+      loadedHTML: null // will fetch below
+    };
 
+    // Activate this tab (deactivate others)
     setActiveTab(module);
-    // Load HTML module content dynamically into #tab-content
-    fetch(`modules/${module}.html`)
-      .then(r => r.ok ? r.text() : `<div style="text-align:center;padding:60px 0;">Module missing.</div>`)
-      .then(html => {
-        if (openedTabs[module]) openedTabs[module].content = html;
-        // Only show if now active
-        if (getActiveTab() === module) tabContent.innerHTML = html;
+
+    // Begin loading module HTML into this tab
+    const modulePath = `modules/${module}.html`;
+    fetch(modulePath)
+      .then((r) =>
+        r.ok
+          ? r.text()
+          : `<div style="text-align:center;padding:54px 0;">Module not implemented...</div>`
+      )
+      .then((html) => {
+        if (openedTabs[module]) {
+          openedTabs[module].loadedHTML = html;
+          // Only display if currently active
+          if (getActiveTab() === module) {
+            tabContent.innerHTML = html;
+          }
+        }
       })
       .catch(() => {
-        if (openedTabs[module]) openedTabs[module].content = "Module load failed.";
+        if (openedTabs[module]) {
+          openedTabs[module].loadedHTML =
+            "<div style='text-align:center;padding:54px 0;color:#ff416c;'>Failed to load module.</div>";
+          if (getActiveTab() === module) {
+            tabContent.innerHTML = openedTabs[module].loadedHTML;
+          }
+        }
       });
   }
 
-  // Set one tab as active, update UI and display correct content
+  // Set a tab as active: highlights, content, sidebar state
+  // PUBLIC_INTERFACE
   function setActiveTab(module) {
-    // Remove .active everywhere
-    Array.from(tabBar.children).forEach(btn => btn.classList.remove("active"));
-    Object.keys(openedTabs).forEach(m => openedTabs[m].tabEl.classList.remove("active"));
-    // Activate this
-    if (openedTabs[module]) openedTabs[module].tabEl.classList.add("active");
-    // Show content or loading
-    tabContent.innerHTML = openedTabs[module] && openedTabs[module].content
-      ? openedTabs[module].content
-      : `<div style="text-align:center;padding:60px 0;">Loading module...</div>`;
-    // Set sidebar highlight
-    navItems.forEach(item => item.classList.toggle("active", item.getAttribute("data-module") === module));
+    // Tab-bar: highlight only this tab
+    Array.from(tabBar.children).forEach((t) =>
+      t.classList.remove("active")
+    );
+    if (openedTabs[module] && openedTabs[module].tabEl)
+      openedTabs[module].tabEl.classList.add("active");
+
+    // Sidebar: set matching sidebar entry to active
+    navItems.forEach(item =>
+      item.classList.toggle(
+        "active",
+        item.getAttribute("data-module") === module
+      )
+    );
+
+    // Main panel: show module's content (or spinner if not loaded yet)
+    if (openedTabs[module]) {
+      const html = openedTabs[module].loadedHTML;
+      tabContent.innerHTML = html
+        ? html
+        : `<div style="text-align:center;padding:54px 0;">Loading module...</div>`;
+    }
+    // Clear out welcome block if present and a tab is activated
+    if (isWelcomeDisplayed()) {
+      tabContent.innerHTML = "";
+    }
   }
 
-  // Returns the module string of the current active tab
+  // Which tab is active? Returns module string or null
+  // PUBLIC_INTERFACE
   function getActiveTab() {
-    const active = Object.keys(openedTabs).find(m => openedTabs[m].tabEl.classList.contains("active"));
-    return active || null;
+    return Object.keys(openedTabs).find(
+      (m) => openedTabs[m].tabEl.classList.contains("active")
+    ) || null;
   }
 
-  // Close given tab and switch to last tab or welcome
+  // Close a tab, safely updating state and focusing the last open tab if any
+  // PUBLIC_INTERFACE
   function closeTab(module) {
-    const { tabEl } = openedTabs[module] || {};
-    if (tabEl) tabBar.removeChild(tabEl);
+    if (!openedTabs[module]) return;
+    const { tabEl } = openedTabs[module];
+    if (tabEl && tabEl.parentElement === tabBar) {
+      tabBar.removeChild(tabEl);
+    }
     delete openedTabs[module];
 
-    // Activate next: last tab in open or welcome if none
-    const openTabNames = Object.keys(openedTabs);
-    if (openTabNames.length) {
-      setActiveTab(openTabNames[openTabNames.length - 1]);
+    // If closing active, select last tab (or first if exists), else no selection
+    const tabNames = Object.keys(openedTabs);
+    if (tabNames.length) {
+      setActiveTab(tabNames[tabNames.length - 1]);
     } else {
-      tabContent.innerHTML = document.querySelector(".mmos-welcome").outerHTML;
+      // All tabs closed: show welcome block again in tab content area
+      if (welcomeBlock) {
+        tabContent.innerHTML = welcomeBlock.outerHTML;
+      } else {
+        tabContent.innerHTML = "<h3>Welcome!</h3><p>Select a feature to start.</p>";
+      }
+      // Remove all .active from sidebar
       navItems.forEach(item => item.classList.remove("active"));
     }
   }
+
+  // Return true if only welcome is shown (no tab is open)
+  function isWelcomeDisplayed() {
+    return tabBar.children.length === 0 || Object.keys(openedTabs).length === 0;
+  }
+
+  // Optionally: Open a default tab on initial load
+  // const DEFAULT_MODULE = "brain-games";
+  // openModuleTab(DEFAULT_MODULE);
 });
