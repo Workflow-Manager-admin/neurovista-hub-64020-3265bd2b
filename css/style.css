@@ -1,17 +1,422 @@
+/* MindMeld OS - Modern Minimalist Responsive Styling with Theme Readiness */
+
 :root {
   --sidebar-width: 210px;
   --sidebar-collapsed: 60px;
-  --primary-bg: #212733;
-  --secondary-bg: #30384d;
+  /* Light Colors */
+  --primary-bg: #f4f6fb;
+  --secondary-bg: #fff;
   --accent: #11e497;
-  --tab-bg: #23283a;
-  --tab-active-bg: #323e5e;
-  --text: #f4f6fb;
-  --text-secondary: #a5adbe;
-  --border: #23283a;
-  --shadow: 0 2px 10px 0 rgba(26,32,44,0.12);
+  --tab-bg: #f0f3f7;
+  --tab-active-bg: #e3eaf2;
+  --text: #191b21;
+  --text-secondary: #444957;
+  --border: #e2eaef;
+  --shadow: 0 2px 16px 0 rgba(26,32,44,0.10);
   --radius: 16px;
+  --transition: 0.2s cubic-bezier(.4,0,.2,1);
+
+  /* Dark Mode Colors */
+  --dark-primary-bg: #212733;
+  --dark-secondary-bg: #30384d;
+  --dark-tab-bg: #23283a;
+  --dark-tab-active-bg: #323e5e;
+  --dark-text: #f4f6fb;
+  --dark-text-secondary: #a5adbe;
+  --dark-border: #23283a;
+  --dark-shadow: 0 2px 14px 0 rgba(26,32,44,0.18);
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-bg: var(--dark-primary-bg);
+    --secondary-bg: var(--dark-secondary-bg);
+    --tab-bg: var(--dark-tab-bg);
+    --tab-active-bg: var(--dark-tab-active-bg);
+    --text: var(--dark-text);
+    --text-secondary: var(--dark-text-secondary);
+    --border: var(--dark-border);
+    --shadow: var(--dark-shadow);
+  }
+}
+
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--primary-bg);
+  color: var(--text);
+  font-family: 'Inter', Arial, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background .18s, color .18s;
+}
+
+#mmos-app {
+  display: flex;
+  min-height: 100vh;
+  background: var(--primary-bg);
+  transition: background var(--transition);
+}
+
+/* Sidebar */
+.mmos-sidebar {
+  background: var(--secondary-bg);
+  color: var(--text);
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: width var(--transition), background var(--transition), box-shadow var(--transition);
+  z-index: 10;
+  border-right: 1px solid var(--border);
+}
+
+.mmos-logo {
+  font-size: 1.55rem;
+  font-weight: 700;
+  padding: 28px 18px 18px 28px;
+  letter-spacing: 1.3px;
+  text-align: left;
+  color: var(--accent);
+  background: none;
+  border-bottom: 1px solid var(--border);
+  transition: color var(--transition);
+}
+
+.mmos-sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mmos-sidebar-nav li {
+  padding: 14px 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s, color 0.14s, border-left 0.14s;
+  border-left: 3px solid transparent;
+  font-size: 1.08rem;
+  color: var(--text-secondary);
+  border-radius: 0 100px 100px 0;
+  user-select: none;
+  outline: none;
+  background: none;
+}
+
+.mmos-sidebar-nav li.active,
+.mmos-sidebar-nav li:hover {
+  background: var(--tab-active-bg);
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
+}
+
+.mmos-sidebar-nav li span {
+  font-size: 1.26em;
+  display: flex;
+  align-items: center;
+  min-width: 24px;
+  justify-content: center;
+}
+
+#sidebar-toggle {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tab-bg);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: background 0.20s, color 0.20s;
+  box-shadow: 0 0 0 1.2px var(--border), 0 2px 10px 0 rgba(26,32,44,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#sidebar-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.mmos-sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+  min-width: var(--sidebar-collapsed);
+  transition: width var(--transition);
+}
+.mmos-sidebar.collapsed .mmos-logo {
+  font-size: 1.3rem;
+  padding: 19px 0 8px 0;
+  text-align: center;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+.mmos-sidebar.collapsed .mmos-sidebar-nav li span + span {
+  display: none;
+}
+.mmos-sidebar.collapsed .mmos-sidebar-nav li {
+  padding: 15px 0;
+  justify-content: center;
+  font-size: 1.3rem;
+  border-radius: 50%;
+}
+.mmos-sidebar.collapsed #sidebar-toggle {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Main content and tabs */
+.mmos-main-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--primary-bg);
+  min-width: 0;
+  transition: background var(--transition);
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.mmos-tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  background: var(--tab-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 18px;
+  height: 48px;
+  align-items: center;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mmos-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.mmos-tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  padding: 12px 22px 10px 12px;
+  margin-right: 6px;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s, background 0.2s, box-shadow 0.18s;
+  outline: none;
+  white-space: nowrap;
+  min-width: 90px;
+  letter-spacing: 0.02em;
+}
+
+.mmos-tab.active {
+  background: var(--secondary-bg);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 -2px 10px 0 rgba(26,32,44,0.05);
+  border-bottom: 2px solid var(--accent);
+}
+
+.mmos-tab:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+.mmos-tab .tab-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.15s;
+  border-radius: 50%;
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0 0 2px 0;
+}
+.mmos-tab .tab-close:hover {
+  color: #ff416c;
+  background: rgba(252,61,111,0.09);
+}
+
+.mmos-tab-content {
+  flex: 1;
+  background: var(--tab-bg);
+  min-height: 300px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 34px 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  box-shadow: 0 6px 32px 0 rgba(26,32,44,0.03);
+  margin-bottom: 10px;
+  margin-top: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* Welcome / Blank */
+.mmos-welcome {
+  text-align: center;
+  color: var(--accent);
+  opacity: 0.91;
+  margin-top: 70px;
+  transition: color var(--transition);
+}
+.mmos-welcome h1 {
+  margin: 0 0 14px 0;
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.mmos-welcome p {
+  color: #87e5c8;
+  margin-bottom: 12px;
+  font-size: 1.15rem;
+}
+
+hr {
+  border: none;
+  border-bottom: 1.5px solid var(--border);
+  margin: 30px 0;
+}
+
+/* Responsive Sidebar and Layout */
+@media (max-width: 1050px) {
+  :root {
+    --sidebar-width: 60px;
+  }
+  .mmos-sidebar:not(.collapsed) {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+  }
+  .mmos-sidebar .mmos-logo, .mmos-sidebar-nav li span + span {
+    display: none;
+  }
+  .mmos-sidebar-nav li {
+    padding: 15px 0;
+    justify-content: center;
+    font-size: 1.13rem;
+  }
+  #sidebar-toggle {
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  :root {
+    --sidebar-width: 60px;
+  }
+  .mmos-sidebar:not(.collapsed) {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+  }
+  .mmos-sidebar .mmos-logo, .mmos-sidebar-nav li span + span {
+    display: none;
+  }
+  .mmos-sidebar-nav li {
+    padding: 15px 0;
+    justify-content: center;
+    font-size: 1.11rem;
+  }
+  #sidebar-toggle {
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0;
+  }
+}
+
+/* Extra-Responsive: sidebar collapses into top bar */
+@media (max-width: 600px) {
+  #mmos-app {
+    flex-direction: column;
+  }
+  .mmos-sidebar {
+    flex-direction: row;
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    border-right: none;
+    border-bottom: 1.5px solid var(--border);
+    box-shadow: 0 4px 22px rgba(0,0,0,.04);
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .mmos-sidebar-nav {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    gap: 0;
+  }
+  .mmos-sidebar-nav li {
+    padding: 0 10px;
+    font-size: 1.08rem;
+    border-radius: 50%;
+  }
+  .mmos-main-content {
+    padding-top: 0;
+  }
+  #sidebar-toggle {
+    display: none;
+  }
+}
+
+/* Scrollbar Styling for Main Area and Sidebar */
+.mmos-tab-content,
+.mmos-sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--tab-bg);
+}
+.mmos-tab-content::-webkit-scrollbar,
+.mmos-sidebar-nav::-webkit-scrollbar {
+  width: 9px;
+  background: var(--tab-bg);
+}
+.mmos-tab-content::-webkit-scrollbar-thumb,
+.mmos-sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+}
+
+/* Focus states for accessibility */
+.mmos-sidebar-nav li:focus-visible,
+.mmos-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+/* Minimal hover effect for sidebar icons only when collapsed */
+.mmos-sidebar.collapsed .mmos-sidebar-nav li:hover,
+.mmos-sidebar.collapsed .mmos-sidebar-nav li.active {
+  background: var(--tab-active-bg);
+  color: var(--accent);
+  border-radius: 50%;
+  border-left: none;
+}
+
 
 body {
   margin: 0;
