@@ -473,6 +473,337 @@ hr {
 }
 
 
+/* === MindMeld Brain Games: Minimal Clean UI === */
+
+/* Shared minimalist button styles */
+.btn,
+button.btn,
+button[class*="btn"] {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05em;
+  font-weight: 500;
+  padding: 8px 22px;
+  box-shadow: 0 2px 10px 0 rgba(44,218,180,0.07);
+  transition: background 0.15s, color 0.13s, box-shadow 0.13s, transform 0.11s;
+  cursor: pointer;
+  outline: none;
+  letter-spacing: 0.01em;
+}
+.btn:active,
+button.btn:active {
+  background: #13c986;
+  color: #fff;
+  transform: scale(0.98);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.btn[disabled],button.btn[disabled] {
+  opacity: 0.62;
+  background: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Brain Games Grid Buttons: for Pattern Recognition tiles */
+.pattern-grid-btn {
+  width: 42px;
+  height: 42px;
+  background: var(--tab-bg);
+  border: 2px solid var(--border);
+  border-radius: 10.5px;
+  transition: background 0.2s, border 0.2s, box-shadow 0.15s;
+  cursor: pointer;
+  box-shadow: 0 1.3px 5px 0 rgba(44,218,180,0.06);
+  font-size: 1.2em;
+  outline: none;
+  padding: 0;
+  position: relative;
+}
+.pattern-grid-btn:hover,
+.pattern-grid-btn:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 3px 12px 0 rgba(44,218,180,0.14);
+}
+.pattern-grid-btn.pattern-active {
+  background: #11e497;
+  border: 2.2px solid #09c18c;
+  animation: pattern-tile-flash 0.4s cubic-bezier(.55,.06,.64,.96);
+}
+@keyframes pattern-tile-flash {
+  0%   { background:#fff;  }
+  55%  { background:#11e497;}
+  100% { background:var(--tab-bg);}
+}
+
+/* Feedback/Status blocks in games */
+.brains-game-main .game-feedback,
+#pattern-feedback,
+#reaction-feedback,
+#memory-match-result {
+  font-size: 1.1em;
+  font-weight: 500;
+  min-height: 27px;
+  margin-top: 9px;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+  transition: color 0.18s;
+}
+.brains-game-main .game-feedback.error,
+#pattern-feedback.error,#reaction-feedback.error,#memory-match-result.error {
+  color: #ff416c;
+}
+.brains-game-main .game-feedback.success,
+#pattern-feedback.success,#reaction-feedback.success,#memory-match-result.success {
+  color: #22b366;
+}
+
+/* Score/Result Bar */
+.pattern-score, #pattern-score,
+#reaction-last, #memory-match-result {
+  margin-top: 7px;
+  font-size: 0.97em;
+  color: var(--text-secondary);
+}
+
+/* Reaction Time Big Button/Box */
+#reaction-box {
+  width: 200px;
+  height: 88px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 1.08em;
+  border-radius: 13px;
+  border: 2.2px solid var(--border);
+  background: #eee;
+  box-shadow: 0 3px 14px 0 rgba(44,218,180,0.04);
+  margin: 16px auto 14px auto;
+  text-align: center;
+  cursor:pointer;
+  user-select: none;
+  transition: background 0.13s, border 0.14s, color 0.13s;
+  outline: none;
+}
+#reaction-box:active {
+  filter: brightness(0.97);
+}
+#reaction-box.ready { background: #43e09f; border-color: #22b366; color: #fff; }
+#reaction-box.waiting { background: #ffec82; border-color: #eec51a; color: #222; }
+#reaction-box.tooSoon { background: #ff416c; border-color: #c2184f; color: #fff; }
+#reaction-box.win { background: #aae9bf; border-color: #36ae77; color: #222; }
+
+/* Memory Match: Card grid + card styles */
+#memory-match-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 52px);
+  gap: 13px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+.memory-card-btn {
+  width: 52px;
+  height: 62px;
+  background: var(--tab-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 2.09em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 1.5px 6px 0 rgba(44,218,180,0.08);
+  outline: none;
+  position: relative;
+  perspective: 600px;
+  padding: 0;
+  /* subtle hover/active */
+  transition: background 0.17s, box-shadow 0.14s, border 0.14s, color 0.13s, transform 0.17s;
+  will-change: transform;
+}
+.memory-card-btn:hover:not(:disabled),
+.memory-card-btn:focus-visible:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 2.5px 13px 0 rgba(44,218,180,0.33);
+  transform: scale(1.035) rotateZ(-1.4deg);
+}
+
+.memory-card-btn[disabled] {
+  cursor: default;
+  opacity: 0.65;
+  background: var(--tab-bg);
+  color: var(--border)
+}
+.memory-card-btn.flipped {
+  background: var(--accent);
+  color: #fff;
+  transition: background 0.22s, color 0.18s;
+}
+.memory-card-btn.matched {
+  background: var(--tab-bg);
+  color: #b6f7e4;
+  opacity: 0.54;
+  border-color: var(--border);
+  transition: background 0.17s, color 0.13s, opacity 0.22s;
+}
+
+/* Card flip animation for memory cards */
+.memory-card-btn.flip-anim {
+  animation: cardflip-anim 0.34s cubic-bezier(.56,.09,.71,1.32);
+}
+@keyframes cardflip-anim {
+  0% { transform: rotateY(0deg);}
+  80% { transform: rotateY(80deg);}
+  100% { transform: rotateY(0deg);}
+}
+
+/* Buttons/group inline for games */
+.brains-game-main .btn,
+.brains-game-main button.btn {
+  margin: 2px 5px;
+}
+.brains-game-main .btn-group {
+  display: flex;
+  gap: 11px;
+}
+
+/* Top-back ("←Hub") button in game views */
+.brains-game-back {
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.98em;
+  border-radius: 7px;
+  padding: 5px 10px 5px 4px;
+  display: inline-flex; align-items:center; gap:5px;
+  transition: background 0.12s, color 0.11s, text-decoration 0.08s;
+}
+.brains-game-back:focus-visible, .brains-game-back:hover {
+  background: var(--tab-bg);
+  text-decoration: underline;
+  color: var(--accent);
+}
+
+/* In-game main container refinement */
+.brains-game-main {
+  background: var(--secondary-bg);
+  border-radius: calc(var(--radius) * 0.7);
+  padding: 22px 7vw 36px 7vw;
+  box-shadow: 0 2px 12px 0 rgba(40,240,210,0.09);
+  color: var(--text);
+  min-height: 180px;
+  margin-top: 0;
+  margin-bottom: 10px;
+  animation: fadeIn .22s linear;
+}
+@media (max-width: 600px) {
+  .brains-game-main { padding: 14px 7px 24px 7px;}
+  .brains-game-back { font-size: 0.914em;}
+  #memory-match-grid { grid-template-columns: repeat(4, 22vw);}
+}
+
+/* Hub tiles grid for Brain Games main screen */
+.brains-hub-tiles {
+  display: flex;
+  gap: 34px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.brains-hub-tile {
+  background: var(--secondary-bg);
+  border: 2.4px solid var(--border);
+  border-radius: calc(var(--radius) * 0.8);
+  box-shadow: 0 2px 15px 0 rgba(40,230,190,0.10);
+  padding: 28px 14px 18px 14px;
+  width: 210px;
+  min-height: 175px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  font-size: 1.08rem;
+  transition: box-shadow 0.17s, border-color 0.16s, transform 0.14s;
+  position: relative;
+  user-select: none;
+  outline: none;
+}
+.brains-hub-tile:hover,
+.brains-hub-tile:focus-visible {
+  box-shadow: 0 5px 29px 0 rgba(44,218,180,0.22);
+  border-color: var(--accent);
+  transform: translateY(-3px) scale(1.03);
+  z-index: 3;
+}
+.brains-hub-tile:active {
+  filter: brightness(0.99);
+}
+.brains-hub-tile-icon {
+  font-size: 2.2em;
+  width: 40px;
+  height: 40px;
+  background: var(--tab-bg);
+  color: var(--accent);
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom: 2px;
+  box-shadow: 0 1.5px 8px 0 rgba(16,200,180,0.06);
+}
+.brains-hub-tile-title {
+  font-size: 1.16em;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: var(--text);
+  letter-spacing: .02em;
+  text-align: center;
+}
+.brains-hub-tile-desc {
+  font-size: 1.01em;
+  color: var(--text-secondary);
+  text-align: center;
+  min-height: 2.3em;
+  opacity: 0.96;
+}
+
+/* Clean up inmodule play grid for grid/tile games */
+#pattern-grid {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 42px);
+  gap: 13px;
+  margin-bottom: 18px;
+  margin-top: 25px;
+}
+
+/* Accessibility for focus on game elements/cards */
+.pattern-grid-btn:focus-visible,
+.memory-card-btn:focus-visible, .brains-hub-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+@media (max-width: 1050px) {
+  .brains-hub-tiles { gap: 18px;}
+  .brains-hub-tile { width: 165px; min-height: 128px;}
+}
+@media (max-width: 600px) {
+  .brains-hub-container { padding: 11px 2vw;}
+  .brains-hub-tiles { gap: 7px;}
+  .brains-hub-tile { width: 98vw; max-width: 340px; min-height: 98px; padding: 18px 8px;}
+  .brains-hub-header { gap: 8px; padding: 9px 8px 8px 9px;}
+}
+
 body {
   margin: 0;
   background: var(--primary-bg);

@@ -210,10 +210,10 @@
             <p style="margin-bottom:22px;">Memorize the sequence! Click the tiles in the pattern's order.<br>
               <small style="color:var(--text-secondary);">Each round, a sequence will flash. Reproduce it to score!</small>
             </p>
-            <div id="pattern-grid" style="display:inline-grid;grid-template-columns:repeat(3,38px);gap:13px;margin-bottom:14px;margin-top:20px;"></div>
-            <button id="start-pattern-btn" class="btn" style="margin-bottom:7px;">Start</button>
-            <div id="pattern-feedback" style="height:28px;margin-top:7px;font-size:1.03em;color:var(--accent);font-weight:500;"></div>
-            <div id="pattern-score" style="margin-top:2px;color:var(--text-secondary);font-size:0.98em;">Score: 0</div>
+            <div id="pattern-grid"></div>
+            <button id="start-pattern-btn" class="btn">Start</button>
+            <div id="pattern-feedback" class="game-feedback"></div>
+            <div id="pattern-score" class="pattern-score">Score: 0</div>
           </div>`,
         'reaction-time':
           `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
@@ -225,11 +225,9 @@
                <span style="color:var(--text-secondary);">Tap/click as fast as you can when ready!<br>
                If you click too soon, you'll have to retry.</span>
              </p>
-             <div id="reaction-box" style="width:198px;height:85px;display:flex;justify-content:center;align-items:center;background:#ddd; border-radius:13px;cursor:pointer;transition:background 0.12s;font-size:1.1em;font-weight:600;color:var(--text); margin:14px 0 10px 0;border:2.2px solid var(--border);">
-               <button id="start-reaction-btn" class="btn" style="font-size:1.06em;">Start</button>
-             </div>
-             <div id="reaction-feedback" style="min-height:32px;margin-top:0.7em;font-size:1.06em;font-weight:500;color:var(--accent);"></div>
-             <div id="reaction-last" style="margin-top:0.1em;color:var(--text-secondary);font-size:0.97em;">Best: -- ms</div>
+             <div id="reaction-box"><button id="start-reaction-btn" class="btn">Start</button></div>
+             <div id="reaction-feedback" class="game-feedback"></div>
+             <div id="reaction-last"></div>
            </div>`,
         'memory-match':
           `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
@@ -238,9 +236,9 @@
            <div class="brains-game-main" id="memory-match-root">
              <h2 style="color:var(--accent);">Memory Match</h2>
              <p style="margin-bottom:17px;">Flip cards, match pairs, and challenge your short-term memory!</p>
-             <div id="memory-match-grid" style="display:grid;grid-template-columns:repeat(4,48px);gap:12px;justify-content:center;margin:18px 0 18px 0;"></div>
-             <button id="memory-match-restart" class="btn" style="margin:8px 0 7px 0;min-width:80px;display:none;">Restart</button>
-             <div id="memory-match-result" style="min-height:31px;font-size:1.09em;margin-top:7px;color:var(--accent);font-weight:500;text-align:center;"></div>
+             <div id="memory-match-grid"></div>
+             <button id="memory-match-restart" class="btn" style="display:none;">Restart</button>
+             <div id="memory-match-result" class="game-feedback" style="text-align:center;"></div>
            </div>`
       };
 
