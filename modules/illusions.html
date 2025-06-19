@@ -1,1 +1,110 @@
-<!-- Optical Illusions Explorer module (empty stub) -->
+<!--
+  Optical Illusions Explorer Module
+  MindMeld OS: Responsive, Clean UI Skeleton for Gallery (Placeholder)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Optical Illusions - MindMeld OS</title>
+  <!-- Inherits main MindMeld OS theme/styles via parent loader -->
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    /* Module-specific minimal tweaks (can be removed/extended if moved to global CSS) */
+    .illusions-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--secondary-bg);
+      box-shadow: 0 2px 12px 0 rgba(26,32,44,0.03);
+      padding: 32px 24px 18px 24px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .illusions-header-icon {
+      background: none;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px 0 rgba(40,240,210,0.10);
+      transition: background 0.16s;
+    }
+    .illusions-header-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      margin: 0;
+      line-height: 1.1;
+      transition: color var(--transition);
+    }
+    .illusions-main {
+      background: var(--tab-bg);
+      min-height: 360px;
+      padding: 34px 24px;
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: 0 8px 32px 0 rgba(26,32,44,0.035);
+      display: flex;
+      flex-direction: column;
+      gap: 34px;
+      transition: background var(--transition), color var(--transition);
+    }
+    .illusions-gallery-placeholder {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.22rem;
+      color: var(--text-secondary);
+      background: var(--secondary-bg);
+      opacity: 0.85;
+      padding: 46px 24px;
+      text-align: center;
+      transition: border-color var(--transition);
+    }
+    @media (max-width: 600px) {
+      .illusions-header {
+        flex-direction: row;
+        gap: 10px;
+        padding: 18px 10px 14px 10px;
+      }
+      .illusions-header-title {
+        font-size: 1.22rem;
+      }
+      .illusions-main {
+        padding: 18px 7px;
+      }
+      .illusions-gallery-placeholder {
+        font-size: 1.03rem;
+        min-height: 110px;
+        padding: 32px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="illusions-header">
+    <span class="illusions-header-icon">
+      <img src="../assets/illusions.svg" alt="Optical illusion icon" width="38" height="38"
+           style="display:block;" />
+    </span>
+    <h1 class="illusions-header-title">Optical Illusions Explorer</h1>
+  </header>
+  <main class="illusions-main">
+    <section aria-label="Optical illusions gallery block" class="illusions-gallery-placeholder">
+      <div>
+        <strong>Illusion gallery coming soon!</strong><br>
+        Visual illusions will appear here, with explanations and interactive exploration modes.<br>
+        <span style="font-size:1.9em;display:inline-block;margin-top:8px;" aria-hidden="true">✨👁️🌀</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
