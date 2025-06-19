@@ -11,25 +11,28 @@
     <aside class="mmos-sidebar" id="sidebar">
       <div class="mmos-logo">🧠 MindMeld OS</div>
       <nav>
-        <ul class="mmos-sidebar-nav">
-          <li data-module="brain-games" class="active"><span>🧩</span> Brain Games</li>
-          <li data-module="illusions"><span>🎨</span> Optical Illusions</li>
-          <li data-module="memory-trainer"><span>🗃️</span> Memory Trainer</li>
-          <li data-module="mindful-breathing"><span>🌿</span> Mindful Breathing</li>
-          <li data-module="ai-chatbot"><span>🤖</span> AI Chatbot</li>
-          <li data-module="youtube-downloader"><span>⬇️</span> YouTube Downloader</li>
-          <li data-module="trivia-flashcards"><span>📚</span> Trivia Flashcards</li>
+        <ul class="mmos-sidebar-nav" id="sidebar-nav">
+          <li data-module="brain-games" class="active"><span>🧩</span> <span>Brain Games</span></li>
+          <li data-module="illusions"><span>🎨</span> <span>Optical Illusions</span></li>
+          <li data-module="pattern-recognition"><span>🧠</span> <span>Pattern Recognition</span></li>
+          <li data-module="memory-trainer"><span>🗃️</span> <span>Memory Trainer</span></li>
+          <li data-module="mindful-breathing"><span>🌿</span> <span>Mindful Breathing</span></li>
+          <li data-module="ai-chatbot"><span>🤖</span> <span>AI Chatbot</span></li>
+          <li data-module="youtube-downloader"><span>⬇️</span> <span>YouTube Downloader</span></li>
+          <li data-module="trivia-flashcards"><span>📚</span> <span>Trivia Flashcards</span></li>
+          <li data-module="rich-ui-ux"><span>✨</span> <span>Rich UI &amp; UX</span></li>
         </ul>
       </nav>
       <button id="sidebar-toggle" aria-label="Toggle Sidebar">≡</button>
     </aside>
-    <main class="mmos-main-content">
+    <main class="mmos-main-content" id="main-content">
+      <!-- Modern-looking tab bar: tabs will be inserted/managed by JS -->
       <div id="tab-bar" class="mmos-tabs">
-        <!-- Opened tabs will be inserted here dynamically -->
+        <!-- Dynamic tabs go here -->
       </div>
       <section id="tab-content" class="mmos-tab-content">
         <!-- Module content will be dynamically loaded here -->
-        <div class="mmos-welcome">
+        <div class="mmos-welcome" id="mmos-welcome">
           <h1>Welcome to MindMeld OS</h1>
           <p>A modular browser-based OS for cognitive stimulation.</p>
           <p>Select a feature from the sidebar to begin.</p>
