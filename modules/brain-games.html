@@ -199,6 +199,7 @@
         'memory-match': 'Memory Match'
       };
       // Placeholder template for each game UI
+// Minimalist playable Memory Match game UI and logic
       const GAME_PLACEHOLDERS = {
         'pattern-recognition':
           `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
@@ -234,11 +235,12 @@
           `<button class="brains-game-back" type="button" aria-label="Back to Brain Games Hub">
              <span aria-hidden="true">←</span> Hub
            </button>
-           <div class="brains-game-main">
+           <div class="brains-game-main" id="memory-match-root">
              <h2 style="color:var(--accent);">Memory Match</h2>
-             <p>This is a placeholder for the Memory Match minigame.<br>
-             Card-matching gameplay goes here.</p>
-             <div style="font-size:2.1em;margin-top:22px;" aria-hidden="true">🧠🃏🎴</div>
+             <p style="margin-bottom:17px;">Flip cards, match pairs, and challenge your short-term memory!</p>
+             <div id="memory-match-grid" style="display:grid;grid-template-columns:repeat(4,48px);gap:12px;justify-content:center;margin:18px 0 18px 0;"></div>
+             <button id="memory-match-restart" class="btn" style="margin:8px 0 7px 0;min-width:80px;display:none;">Restart</button>
+             <div id="memory-match-result" style="min-height:31px;font-size:1.09em;margin-top:7px;color:var(--accent);font-weight:500;text-align:center;"></div>
            </div>`
       };
 
@@ -289,7 +291,7 @@
       });
     })();
 
-    // Pattern Recognition Game JS (minimal logic for prototype)
+    // Pattern Recognition, Reaction Time and Memory Match JS logic (minimal prototypes, modular mount per section)
     (function() {
       const area = document.getElementById('brains-game-area');
       // ---- Pattern Recognition game logic (as before) ----
@@ -406,14 +408,133 @@
           btn.disabled = false;
         }
       }
-      // Attach to page updates: when pattern-recognition div appears, run mount
-      const observer = new MutationObserver(() => {
-        patternGameMount();
-        reactionGameMount();
-      });
-      observer.observe(area, {childList:true, subtree:true});
-      // Initial attach if already present:
-      patternGameMount();
+
+      // ---- Memory Match Game ---
+      function memoryMatchMount() {
+        const root = area.querySelector('#memory-match-root');
+        if (!root) return;
+        const grid = root.querySelector('#memory-match-grid');
+        const resultDiv = root.querySelector('#memory-match-result');
+        const restartBtn = root.querySelector('#memory-match-restart');
+        const CARD_PAIRS = 8;
+        const symbols = ['🐶','🐱','🦊','🐸','🦉','🐟','🍎','🍊','🐙','⭐','🌙','🍄','🍓','⚽','🛸','💎']; // fallback if needed
+        let deck = [];
+        let flipped = [];
+        let matched = [];
+        let busy = false;
+        let disables = false;
+
+        // PUBLIC_INTERFACE
+        function shuffleDeck() {
+          // pick eight random, then duplicate and shuffle
+          const base = symbols.slice(0, CARD_PAIRS); 
+          deck = base.concat(base)
+            .map((v,i)=>({val:v,id:i}))
+            .sort(()=>Math.random()-0.5);
+        }
+        // PUBLIC_INTERFACE
+        function renderGrid() {
+          grid.innerHTML = '';
+          deck.forEach((card, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'memory-card-btn';
+            btn.setAttribute('aria-label', matched.includes(idx) ? `Matched card ${card.val}` : "Card");
+            btn.style.width = '48px';
+            btn.style.height = '56px';
+            btn.style.background = matched.includes(idx) || flipped.includes(idx) 
+               ? 'var(--accent)' : 'var(--tab-bg)';
+            btn.style.border = '2px solid var(--border)';
+            btn.style.borderRadius = '11px';
+            btn.style.fontSize = '2.08em';
+            btn.style.display = 'flex';
+            btn.style.justifyContent = 'center';
+            btn.style.alignItems = 'center';
+            btn.style.cursor = disables || matched.includes(idx) ? 'default' : 'pointer';
+            btn.style.boxShadow = '0 1.5px 5px 0 rgba(44,218,180,0.09)';
+            btn.style.outline = 'none';
+            btn.tabIndex = disables || matched.includes(idx) ? -1 : 0;
+            if (matched.includes(idx) || flipped.includes(idx)) {
+              btn.textContent = card.val;
+              btn.style.opacity = matched.includes(idx) ? '0.57' : '1';
+              btn.style.background = matched.includes(idx) ? 'var(--tab-bg)' : 'var(--accent)';
+            } else {
+              btn.textContent = '🂠';
+              btn.style.color = '#9be1c5';
+              btn.style.background = 'var(--tab-bg)';
+            }
+            btn.disabled = disables || matched.includes(idx);
+            btn.onclick = () => handleFlip(idx);
+            btn.onkeydown = (e) => {
+              if ((e.key === " " || e.key === "Enter") && !btn.disabled) {
+                e.preventDefault();
+                handleFlip(idx);
+              }
+            };
+            grid.appendChild(btn);
+          });
+        }
+
+        // PUBLIC_INTERFACE
+        function handleFlip(idx) {
+          if (busy || disables || matched.includes(idx) || flipped.includes(idx)) return;
+          if (flipped.length === 2) return;
+          flipped.push(idx);
+          renderGrid();
+          if (flipped.length === 2) {
+            busy = true;
+            setTimeout(() => checkMatch(), 600);
+          }
+        }
+
+        // PUBLIC_INTERFACE
+        function checkMatch() {
+          if (flipped.length !== 2) { busy = false; return; }
+          const c1 = deck[flipped[0]];
+          const c2 = deck[flipped[1]];
+          if (c1.val === c2.val) {
+            matched.push(flipped[0], flipped[1]);
+            flipped = [];
+            renderGrid();
+            if (matched.length === deck.length) {
+              // Win
+              showResult('🎉 You matched all pairs! Well done.', true);
+              disables = true;
+              restartBtn.style.display = '';
+            } else {
+              showResult('✅ Matched!', false);
+            }
+            busy = false;
+          } else {
+            showResult('❌ Not a match!', false);
+            setTimeout(() => {
+              flipped = [];
+              renderGrid();
+              busy = false;
+              showResult('', false);
+            }, 720);
+          }
+        }
+        // PUBLIC_INTERFACE
+        function showResult(msg, win) {
+          resultDiv.textContent = msg;
+          resultDiv.style.color = win ? '#2ecf84' : 'var(--accent)';
+        }
+        // PUBLIC_INTERFACE
+        function startMemoryMatch() {
+          disables = false;
+          matched = [];
+          flipped = [];
+          busy = false;
+          restartBtn.style.display = 'none';
+          showResult('', false);
+          shuffleDeck();
+          renderGrid();
+        }
+        restartBtn.onclick = startMemoryMatch;
+        // Setup when rendered
+        startMemoryMatch();
+      }
 
       // ---- Reaction Time Tester (core logic) ----
       function reactionGameMount() {
@@ -497,7 +618,16 @@
         resetBox();
       }
 
-      // Also mount on direct navigation
+      // Attach to page updates: when game area changes, run relevant mount
+      const observer = new MutationObserver(() => {
+        patternGameMount();
+        memoryMatchMount();
+        reactionGameMount();
+      });
+      observer.observe(area, {childList:true, subtree:true});
+      // Initial attaches if already present:
+      patternGameMount();
+      memoryMatchMount();
       reactionGameMount();
 
     })();
