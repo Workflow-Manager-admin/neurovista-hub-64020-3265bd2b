@@ -3,6 +3,57 @@
  * Handles sidebar navigation, tab creation, dynamic loading of HTML modules, tab switching, and safe tab closing.
  * Uses only markup hooks present in index.html.
  */
+/**
+ * Theme Toggle: Light/Dark Mode with localStorage
+ */
+(function themeToggleInit() {
+  // PUBLIC_INTERFACE
+  const setTheme = (theme) => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("mmos-theme", theme);
+    updateThemeButton(theme);
+  };
+
+  // PUBLIC_INTERFACE
+  const updateThemeButton = (theme) => {
+    const btn = document.getElementById("theme-toggle-icon");
+    if (!btn) return;
+    if (theme === "dark") {
+      btn.textContent = "🌙";
+    } else {
+      btn.textContent = "🌞";
+    }
+  };
+
+  // Get stored preference, or system preference
+  let preferred = localStorage.getItem("mmos-theme");
+  if (!preferred) {
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    preferred = mql.matches ? "dark" : "light";
+  }
+  document.documentElement.setAttribute("data-theme", preferred);
+  document.addEventListener("DOMContentLoaded", () => updateThemeButton(preferred));
+
+  // Setup button logic
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("theme-toggle");
+    if (!toggle) return;
+    toggle.addEventListener("click", () => {
+      const current = (document.documentElement.getAttribute("data-theme") === "dark") ? "dark" : "light";
+      const next = current === "dark" ? "light" : "dark";
+      setTheme(next);
+    });
+    // Update icon in case theme was set before DOMContentLoaded fires
+    updateThemeButton(document.documentElement.getAttribute("data-theme"));
+  });
+
+  // For a11y: update theme if system changes (does not override manual user choice)
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+    if (!localStorage.getItem("mmos-theme")) {
+      setTheme(e.matches ? "dark" : "light");
+    }
+  });
+})();
 // PUBLIC_INTERFACE
 document.addEventListener("DOMContentLoaded", () => {
   // Key DOM hooks (must match index.html)

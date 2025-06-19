@@ -40,6 +40,61 @@
   }
 }
 
+/* Manual dark theme override via JS */
+html[data-theme='dark'] {
+  --primary-bg: var(--dark-primary-bg);
+  --secondary-bg: var(--dark-secondary-bg);
+  --tab-bg: var(--dark-tab-bg);
+  --tab-active-bg: var(--dark-tab-active-bg);
+  --text: var(--dark-text);
+  --text-secondary: var(--dark-text-secondary);
+  --border: var(--dark-border);
+  --shadow: var(--dark-shadow);
+}
+
+html[data-theme='light'] {
+  --primary-bg: #f4f6fb;
+  --secondary-bg: #fff;
+  --tab-bg: #f0f3f7;
+  --tab-active-bg: #e3eaf2;
+  --text: #191b21;
+  --text-secondary: #444957;
+  --border: #e2eaef;
+  --shadow: 0 2px 16px 0 rgba(26,32,44,0.10);
+}
+
+/* Theme Toggle Button */
+#theme-toggle {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: var(--tab-bg);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 1.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, color 0.18s;
+  box-shadow: 0 0 0 1.2px var(--border), 0 2px 10px 0 rgba(26,32,44,0.06);
+  z-index: 11;
+}
+#theme-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* When sidebar is collapsed, theme toggle stays visible */
+.mmos-sidebar.collapsed #theme-toggle {
+  top: 8px;
+  right: 8px;
+}
+
+
 html, body {
   height: 100%;
 }
